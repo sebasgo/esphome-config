@@ -1,0 +1,85 @@
+---
+
+substitutions:
+  dev_id: coffeemachine
+  dev_name: Kaffeemaschine
+
+packages:
+  device_base: !include common/plug_gosund.yaml
+
+sensor:
+  - <<: !include common/sensor/uptime.yaml
+  - <<: !include common/sensor/wifi.yaml
+  - <<: !include common/sensor/plug_gosund_power.yaml
+    current:
+      id: current
+      name: ${dev_name} Stromstärke
+      unit_of_measurement: A
+      accuracy_decimals: 3
+      filters:
+        # Map from sensor -> measured value
+        - calibrate_linear:
+            - 0.0 -> 0.02
+            - 6.31041 -> 5.08
+            - 10.52988 -> 8.48
+        # Make everything below 0.01A appear as just 0A.
+        # Furthermore it corrects 0.02A for the power usage of the plug.
+        - lambda: if (x < (0.01 + 0.02)) return 0; else return (x - 0.02);
+    # Voltage sensor
+    voltage:
+      id: voltage
+      name: ${dev_name} Spannung
+      unit_of_measurement: V
+      accuracy_decimals: 1
+      filters:
+        # Map from sensor -> measured value
+        - calibrate_linear:
+            - 0.0 -> 0.0
+            - 623.71552 -> 237.18
+            - 615.67896 -> 234.51
+    # Power sensor
+    power:
+      id: power
+      name: ${dev_name} Leistung
+      unit_of_measurement: W
+      accuracy_decimals: 0
+      filters:
+        # Map from sensor -> measured value
+        - calibrate_linear:
+            - 0.0 -> 1.68
+            - 11836.540102 -> 1980.0
+            - 7216.39355 -> 1206.56
+        # Make everything below 2W appear as just 0W.
+        # Furthermore it corrects 1.68W for the power usage of the plug.
+        - lambda: if (x < (2 + 1.68)) return 0; else return (x - 1.68);
+  - <<: !include common/sensor/total_daily_energy.yaml
+
+binary_sensor:
+  - platform: template
+    id: in_use
+    name: ${dev_name} In Benutzung
+    filters:
+      - delayed_on: 20s  # ignore periodic heating to keep boiler temperature
+    lambda: !lambda |-
+      if (!id(relay).state) {
+          return false;
+      }
+      if (isnan(id(power).state)) {
+          return {};
+      }
+      // pump needs about 54 W, heater is not running all the time
+      return id(power).state > 40;
+  - platform: template
+    id: idle
+    name: ${dev_name} Idle
+    filters:
+      - delayed_on: 30min
+    lambda: !lambda |-
+      if (!id(relay).state) {
+          return false;
+      }
+      return !id(in_use).state;
+    on_press:
+      then:
+        - switch.turn_off: relay
+

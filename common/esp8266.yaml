@@ -1,0 +1,50 @@
+esphome:
+  name: $dev_id
+  platform: ESP8266
+  board: esp8285
+  comment: $dev_name
+
+# WiFi connection
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  domain: .lan
+
+  # Enable fallback hotspot
+  ap:
+    ssid: "Coffeemachine Fallback Hotspot"
+    password: !secret wifi_ap_password
+
+# Enable captive portal for emergency flashing
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret esphome_api_password
+
+# Enable over-the-air updates
+ota:
+  password: !secret esphome_ota_password
+
+# Sync time with Home Assistant
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+# Text sensors with general information
+text_sensor:
+  - platform: version
+    name: version
+  - platform: wifi_info
+    ip_address:
+      id: ip
+      name: ${dev_name} IP
+    ssid:
+      id: ssid
+      name: ${dev_name} SSID
+    bssid:
+      id: bssid
+      name: ${dev_name} BSSID

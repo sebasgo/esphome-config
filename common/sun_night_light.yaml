@@ -1,0 +1,12 @@
+packages:
+ sun: !include sun.yaml
+
+sun:
+  on_sunrise:
+    - elevation: -0.5
+      then:
+      - switch.turn_off: relay
+  on_sunset:
+    - elevation: -0.5
+      then:
+      - switch.turn_on: relay

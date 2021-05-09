@@ -1,0 +1,56 @@
+---
+
+substitutions:
+  dev_id: plug02
+  dev_name: Steckdose 2
+
+packages:
+  device_base: !include common/plug_gosund.yaml
+
+sensor:
+  - <<: !include common/sensor/uptime.yaml
+  - <<: !include common/sensor/wifi.yaml
+  - <<: !include common/sensor/plug_gosund_power.yaml
+    current:
+      id: current
+      name: ${dev_name} Stromstärke
+      unit_of_measurement: A
+      accuracy_decimals: 3
+      filters:
+        # Map from sensor -> measured value
+        - calibrate_linear:
+            - 0.0 -> 0.02
+            - 6.2 -> 5.10
+            - 10.3 -> 8.45
+        # Make everything below 0.01A appear as just 0A.
+        # Furthermore it corrects 0.02A for the power usage of the plug.
+        - lambda: if (x < (0.01 + 0.02)) return 0; else return (x - 0.02);
+    # Voltage sensor
+    voltage:
+      id: voltage
+      name: ${dev_name} Spannung
+      unit_of_measurement: V
+      accuracy_decimals: 1
+      filters:
+        # Map from sensor -> measured value
+        - calibrate_linear:
+            - 0.0 -> 0.0
+            - 608.7 -> 236.15
+            - 597.0 -> 232.20
+    # Power sensor
+    power:
+      id: power
+      name: ${dev_name} Leistung
+      unit_of_measurement: W
+      accuracy_decimals: 0
+      filters:
+        # Map from sensor -> measured value
+        - calibrate_linear:
+            - 0.0 -> 1.12
+            - 11247.0 -> 1968.2
+            - 7875.1 -> 1200.4
+        # Make everything below 2W appear as just 0W.
+        # Furthermore it corrects 1.68W for the power usage of the plug.
+        - lambda: if (x < (2 + 1.12)) return 0; else return (x - 1.12);
+  - <<: !include common/sensor/total_daily_energy.yaml
+

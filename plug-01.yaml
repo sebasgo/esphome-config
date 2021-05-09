@@ -1,0 +1,57 @@
+---
+
+substitutions:
+  dev_id: plug01
+  dev_name: Weihnachtsstern Küche
+
+packages:
+  sun: !include common/sun_night_light.yaml
+  device_base: !include common/plug_gosund.yaml
+
+sensor:
+  - <<: !include common/sensor/uptime.yaml
+  - <<: !include common/sensor/wifi.yaml
+  - <<: !include common/sensor/plug_gosund_power.yaml
+    current:
+      id: current
+      name: ${dev_name} Stromstärke
+      unit_of_measurement: A
+      accuracy_decimals: 3
+      filters:
+        # Map from sensor -> measured value
+        - calibrate_linear:
+            - 0.0 -> 0.02
+            - 10.05 -> 8.46
+            - 6.32 -> 5.09
+        # Make everything below 0.01A appear as just 0A.
+        # Furthermore it corrects 0.02A for the power usage of the plug.
+        - lambda: if (x < (0.01 + 0.02)) return 0; else return (x - 0.02);
+    # Voltage sensor
+    voltage:
+      id: voltage
+      name: ${dev_name} Spannung
+      unit_of_measurement: V
+      accuracy_decimals: 1
+      filters:
+        # Map from sensor -> measured value
+        - calibrate_linear:
+            - 0.0 -> 0.0
+            - 624.260 -> 236.15
+            - 612.3 -> 231.86
+    # Power sensor
+    power:
+      id: power
+      name: ${dev_name} Leistung
+      unit_of_measurement: W
+      accuracy_decimals: 0
+      filters:
+        # Map from sensor -> measured value
+        - calibrate_linear:
+            - 0.0 -> 1.68
+            - 11602.084 -> 1965.93
+            - 7030.20 -> 1193.06
+        # Make everything below 2W appear as just 0W.
+        # Furthermore it corrects 1.68W for the power usage of the plug.
+        - lambda: if (x < (2 + 1.68)) return 0; else return (x - 1.68);
+  - <<: !include common/sensor/total_daily_energy.yaml
+

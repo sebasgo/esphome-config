@@ -1,0 +1,9 @@
+# Total daily energy sensor
+- platform: total_daily_energy
+  id: daily_energy
+  name: ${dev_name} Täglicher Stromverbrauch
+  power_id: power
+  filters:
+    # Multiplication factor from W to kW is 0.001
+    - multiply: 0.001
+  unit_of_measurement: kWh

@@ -1,0 +1,4 @@
+# WiFi Signal sensor
+- platform: wifi_signal
+  name: ${dev_name} Wifi Signalstärke
+  update_interval: 10s
