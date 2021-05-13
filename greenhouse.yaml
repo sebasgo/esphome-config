@@ -1,0 +1,29 @@
+---
+
+substitutions:
+  dev_id: greenhouse
+  dev_name: Gewächshaus
+
+packages:
+  device_base: !include common/az-delivery-devkit-v4.yaml
+
+spi:
+  clk_pin: 18
+  mosi_pin: 23
+  miso_pin: 19
+
+xpt2046:
+  id: touchscreen
+  cs_pin: 14
+  irq_pin: 16
+  dimension_x: 240
+  dimension_y: 320
+  calibration_x_min: 220
+  calibration_x_max: 3840
+  calibration_y_min: 335
+  calibration_y_max: 3860
+  on_state:
+    - lambda: |-
+        if (touched)
+          ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%d", id(touchscreen).x, id(touchscreen).y, id(touchscreen).x_raw, id(touchscreen).y_raw);
+
