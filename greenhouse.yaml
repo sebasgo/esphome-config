@@ -7,15 +7,62 @@ substitutions:
 packages:
   device_base: !include common/az-delivery-devkit-v4.yaml
 
+dallas:
+  - pin: 32
+
+sensor:
+  - platform: dallas
+    id: temp_indoor
+    address: 0x9201206378C4B428
+    name: ${dev_name} Temperatur innen
+  - platform: dallas
+    id: temp_outdoor
+    address: 0xA10120637C47ED28
+    name: ${dev_name} Temperatur außen
+
 spi:
   clk_pin: 18
   mosi_pin: 23
   miso_pin: 19
 
+# color:
+#   - id: white
+#     red: 100%
+#     green: 100%
+#     blue: 100%
+# 
+# font:
+#   - file: fonts/FiraSans-Medium.ttf
+#     id: fira_medium
+#     size: 20
+# 
+# display:
+#   - platform: ili9341
+#     model: TFT 2.4
+#     cs_pin: 5
+#     dc_pin: 4
+#     # led_pin: 15
+#     reset_pin: 22
+#     # rotation: 90
+#     lambda: |-
+#       it.print(0, 0, id(fira_medium), COLOR_WHITE, TextAlign::TOP_LEFT, "Hello World!");
+# 
+# output:
+#   - platform: ledc
+#     id: display_backlight_output
+#     pin: 15
+# 
+# light:
+#   - platform: monochromatic
+#     id: backlight
+#     name: ${dev_name} Hintergrundbeleuchtung
+#     output: display_backlight_output
+#     restore_mode: ALWAYS_ON
+
 xpt2046:
   id: touchscreen
   cs_pin: 14
-  irq_pin: 16
+  irq_pin: 27
   dimension_x: 240
   dimension_y: 320
   calibration_x_min: 220
