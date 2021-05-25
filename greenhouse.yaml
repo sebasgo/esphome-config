@@ -7,18 +7,105 @@ substitutions:
 packages:
   device_base: !include common/az-delivery-devkit-v4.yaml
 
+globals:
+  - id: temps_buf_indoor
+    type: float[24*60]
+  - id: temps_buf_outdoor
+    type: float[24*60]
+  - id: temps_buf_indoor_index
+    type: int
+    initial_value: "0"
+  - id: temps_buf_outdoor_index
+    type: int
+    initial_value: "0"
+
+esphome:
+  on_boot:
+    priority: 700 # before sensors
+    then:
+      - lambda: |-
+          auto& buf_indoor = id(temps_buf_indoor);
+          auto& buf_outdoor = id(temps_buf_outdoor);
+          for (int i=0; i < sizeof(buf_indoor) / sizeof(buf_indoor[0]); i++) {
+              buf_indoor[i] = NAN;
+              buf_outdoor[i] = NAN;
+          }
+
 dallas:
   - pin: 32
+    update_interval: 60s
 
 sensor:
   - platform: dallas
     id: temp_indoor
     address: 0x9201206378C4B428
     name: ${dev_name} Temperatur innen
+    icon: "mdi:thermometer"
+    on_value:
+      then:
+      - lambda: |-
+          auto& buf = id(temps_buf_indoor);
+          auto& i = id(temps_buf_indoor_index);
+          buf[i++] = x;
+          float min_temp{x};
+          float max_temp{x};
+          for (int i=0; i < sizeof(buf) / sizeof(buf[0]); i++) {
+              min_temp = min(min_temp, buf[i]);
+              max_temp = max(max_temp, buf[i]);
+          }
+          id(temp_indoor_min).publish_state(min_temp);
+          id(temp_indoor_max).publish_state(max_temp);
   - platform: dallas
     id: temp_outdoor
     address: 0xA10120637C47ED28
     name: ${dev_name} Temperatur außen
+    icon: "mdi:thermometer"
+    on_value:
+      then:
+      - lambda: |-
+          auto& buf = id(temps_buf_outdoor);
+          auto& i = id(temps_buf_outdoor_index);
+          buf[i++] = x;
+          float min_temp{x};
+          float max_temp{x};
+          for (int i=0; i < sizeof(buf) / sizeof(buf[0]); i++) {
+              min_temp = min(min_temp, buf[i]);
+              max_temp = max(max_temp, buf[i]);
+          }
+          id(temp_outdoor_min).publish_state(min_temp);
+          id(temp_outdoor_max).publish_state(max_temp);
+  - platform: template
+    id: temp_indoor_min
+    name: ${dev_name} Temperatur innen min
+    update_interval: 60s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+    device_class: temperature
+    icon: "mdi:thermometer-low"
+  - platform: template
+    id: temp_indoor_max
+    name: ${dev_name} Temperatur innen max
+    update_interval: 60s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+    device_class: temperature
+    icon: "mdi:thermometer-high"
+  - platform: template
+    id: temp_outdoor_min
+    name: ${dev_name} Temperatur außen min
+    update_interval: 60s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+    device_class: temperature
+    icon: "mdi:thermometer-low"
+  - platform: template
+    id: temp_outdoor_max
+    name: ${dev_name} Temperatur außen max
+    update_interval: 60s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+    device_class: temperature
+    icon: "mdi:thermometer-high"
 
 spi:
   clk_pin: 18
