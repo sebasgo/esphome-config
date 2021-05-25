@@ -7,4 +7,7 @@
 **/lib/
 **/src/
 **/platformio.ini
+**/partitions.csv
 /common/secrets.yaml
+*.swp
+
