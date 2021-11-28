@@ -28,6 +28,7 @@ logger:
 
 # Enable Home Assistant API
 api:
+  id: native_api
   password: !secret esphome_api_password
 
 # Enable over-the-air updates
@@ -53,3 +54,9 @@ text_sensor:
     bssid:
       id: bssid
       name: ${dev_name} BSSID
+
+sensor:
+  - platform: wifi_signal
+    id: rssi
+    name: ${dev_name} Wifi Signalstärke
+
