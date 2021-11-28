@@ -2,11 +2,16 @@ packages:
  sun: !include sun.yaml
 
 sun:
-  on_sunrise:
-    - elevation: -0.5
-      then:
-      - switch.turn_off: relay
   on_sunset:
     - elevation: -0.5
       then:
       - switch.turn_on: relay
+
+time:
+ - platform: homeassistant
+   on_time: 
+     seconds: 0
+     minutes: 0
+     hours: 0
+     then:
+      - switch.turn_off: relay
