@@ -272,23 +272,38 @@ display:
               }
           }
       };
-      draw_header();
-      draw_temp_plot(68, id(temps_buf_indoor), id(temps_buf_indoor_index), id(temp_indoor_min).state, id(temp_indoor_max).state);
-      draw_temp_plot(216, id(temps_buf_outdoor), id(temps_buf_outdoor_index), id(temp_outdoor_min).state, id(temp_outdoor_max).state);
-      draw_temps(24, "Innen", id(temp_indoor), id(temp_indoor_min), id(temp_indoor_max));
-      draw_temps(172, "Außen", id(temp_outdoor), id(temp_outdoor_min), id(temp_outdoor_max));
+      if(id(backlight_script).is_running()) {
+          draw_header();
+          draw_temp_plot(68, id(temps_buf_indoor), id(temps_buf_indoor_index), id(temp_indoor_min).state, id(temp_indoor_max).state);
+          draw_temp_plot(216, id(temps_buf_outdoor), id(temps_buf_outdoor_index), id(temp_outdoor_min).state, id(temp_outdoor_max).state);
+          draw_temps(24, "Innen", id(temp_indoor), id(temp_indoor_min), id(temp_indoor_max));
+          draw_temps(172, "Außen", id(temp_outdoor), id(temp_outdoor_min), id(temp_outdoor_max));
+      }
+      else {
+          // burn-in prevention: screen is normally-white, so set entire screen to this color
+          it.filled_rectangle(0, 0, 240, 320, COLOR_WHITE);
+      }
 output:
   - platform: ledc
     id: display_backlight_output
     pin: 15
     inverted: yes
 
+script:
+  - id: backlight_script
+    mode: restart
+    then:
+      - light.turn_on: backlight
+      - delay: 1 min
+      - light.turn_off: backlight
+
+
 light:
   - platform: monochromatic
     id: backlight
     name: ${dev_name} Hintergrundbeleuchtung
     output: display_backlight_output
-    restore_mode: ALWAYS_ON
+    restore_mode: ALWAYS_OFF
 
 xpt2046:
   id: touchscreen
@@ -302,6 +317,8 @@ xpt2046:
   calibration_y_max: 3860
   on_state:
     - lambda: |-
-        if (touched)
+        if (touched) {
           ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%d", id(touchscreen).x, id(touchscreen).y, id(touchscreen).x_raw, id(touchscreen).y_raw);
+          id(backlight_script).execute();
+        }
 
