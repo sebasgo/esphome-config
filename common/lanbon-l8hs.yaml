@@ -6,9 +6,9 @@ esphome:
 
   # Include customized header files for TFT_eSPI, LVGL components and the demo UI
   includes:
-    - common/bootlogo.h
-    - common/lv_conf.h
-    - common/LvglComponent.h
+    - common/lvgl/bootlogo.h
+    - common/lvgl/lv_conf.h
+    - common/lvgl/LvglComponent.h
 
   # Dowload extra libraries for TFT_eSPI, LVGL and the demo UI
   libraries:
