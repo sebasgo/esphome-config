@@ -10,4 +10,5 @@
 **/partitions.csv
 /common/secrets.yaml
 *.swp
+.directory
 
