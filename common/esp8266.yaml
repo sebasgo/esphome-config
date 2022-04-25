@@ -37,7 +37,7 @@ time:
 # Text sensors with general information
 text_sensor:
   - platform: version
-    name: version
+    name: ${dev_name} Version
   - platform: wifi_info
     ip_address:
       id: ip
