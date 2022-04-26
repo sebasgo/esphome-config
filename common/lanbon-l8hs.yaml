@@ -94,6 +94,22 @@ custom_component:
       auto lvgl_component = new LvglComponent();
       return {lvgl_component};
 
+binary_sensor:
+  - platform: custom
+    lambda: |-
+      auto sensor = new LvglIdleSensor();
+      App.register_component(sensor);
+      return {sensor};
+    binary_sensors:
+      id: lvgl_idle_sensor
+      name: ${dev_name} Idle Sensor
+      on_press:
+        then:
+          - light.turn_off: backlight
+      on_release:
+        then:
+          - light.turn_on: backlight
+
 switch:
   # Output relays
   - platform: gpio
@@ -112,8 +128,11 @@ switch:
 light:
   # Backlight
   - platform: monochromatic
+    id: backlight
     output: backlight_led
     name: ${dev_name} Backlight
+    restore_mode: ALWAYS_ON
+    default_transition_length: 200ms
 
   # Moodlight
   - platform: rgb

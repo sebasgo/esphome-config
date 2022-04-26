@@ -6,6 +6,7 @@
 
 #include "esphome/core/component.h"
 #include "esphome/components/number/number.h"
+#include <esphome/components/binary_sensor/binary_sensor.h>
 
 #include <Wire.h>
 #include "FT6336U.h"
@@ -511,4 +512,19 @@ public:
     // Acknowledge new state by publishing it
     //sw->publish_state(state);
   }
+};
+
+class LvglIdleSensor : public PollingComponent, public binary_sensor::BinarySensor {
+
+ public:
+  LvglIdleSensor() : PollingComponent(66) {}
+
+  void setup() override {
+  }
+
+  void update() override {
+    bool idle = lv_disp_get_inactive_time(NULL) > 10 * 1000;
+    publish_state(idle);
+  }
+
 };
