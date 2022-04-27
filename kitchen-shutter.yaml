@@ -26,45 +26,7 @@ cover:
       - switch.turn_off: relay1
       - switch.turn_off: relay2
 
-switch:
-  - platform: custom
-    id: my_switch1
-    lambda: |-
-      auto my_switch1 = new LvglSwitch(50,50,80,45);
-      App.register_component(my_switch1);
-      return {my_switch1};
-    switches:
-      name: "Switch 1"
-      icon: "mdi:desk-lamp"
-      on_turn_on:
-        - switch.turn_on: relay1
-      on_turn_off:
-        - switch.turn_off: relay1
-
-  - platform: custom
-    id: my_switch2
-    lambda: |-
-      auto my_switch2 = new LvglCheckbox(50,100,150,30);
-      App.register_component(my_switch2);
-      return {my_switch2};
-    switches:
-      name: "Switch 2"
-      icon: "mdi:floor-lamp"
-      on_turn_on:
-        - switch.turn_on: relay2
-      on_turn_off:
-        - switch.turn_off: relay2
-
-  - platform: custom
-    id: my_switch3
-    lambda: |-
-      auto my_switch3 = new LvglToggleButton(50,200,150,45);
-      App.register_component(my_switch3);
-      return {my_switch3};
-    switches:
-      name: "Switch 3"
-      icon: "mdi:ceiling-light"
-      on_turn_on:
-        - switch.turn_on: relay3
-      on_turn_off:
-        - switch.turn_off: relay3
+custom_component:
+  - lambda: |-
+      auto ui = new KitchenShutterUI();
+      return {ui};
