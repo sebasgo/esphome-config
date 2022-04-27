@@ -513,6 +513,8 @@ typedef void* lv_font_user_data_t;
 #  define lv_vsnprintf    vsnprintf
 #endif  /*LV_SPRINTF_CUSTOM*/
 
+#define LV_SPRINTF_USE_FLOAT 1
+
 
 /*===================
  *  LV_OBJ SETTINGS

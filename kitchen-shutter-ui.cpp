@@ -7,6 +7,15 @@ void KitchenShutterUI::setup() {
     setup_header();
 }
 
+void KitchenShutterUI::set_temp(float temp) {
+    if (isnan(temp)) {
+        lv_label_set_text(temp_label_, "-- °C");
+    }
+    else {
+        lv_label_set_text_fmt(temp_label_, "%.1f °C", temp);
+    }
+}
+
 void KitchenShutterUI::setup_styles() {
     lv_style_init(&header_style_);
     lv_style_set_radius(&header_style_, 0);
@@ -27,7 +36,8 @@ void KitchenShutterUI::setup_header() {
     lv_label_set_text(time_label, "12:34");
     lv_obj_align(time_label, LV_ALIGN_LEFT_MID, 0, 0);
 
-    lv_obj_t *temp_label = lv_label_create(header);
-    lv_label_set_text(temp_label, "-12 °C");
-    lv_obj_align(temp_label, LV_ALIGN_RIGHT_MID, 0, 0);
+    temp_label_ = lv_label_create(header);
+    lv_obj_align(temp_label_, LV_ALIGN_RIGHT_MID, 0, 0);
+    set_temp(NAN);
 }
+

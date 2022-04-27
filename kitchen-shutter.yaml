@@ -1,11 +1,15 @@
 ---
-
 substitutions:
   dev_id: kitchen-shutter
   dev_name: Jalousie Küche
 
 packages:
   device_base: !include common/lanbon-l8hs.yaml
+
+esphome:
+  includes:
+    - kitchen-shutter-ui.h
+    - kitchen-shutter-ui.cpp
 
 cover:
   - platform: time_based
@@ -26,7 +30,23 @@ cover:
       - switch.turn_off: relay1
       - switch.turn_off: relay2
 
+sensor:
+  - platform: homeassistant
+    internal: yes
+    device_class: "temperature"
+    state_class: "measurement"
+    id: temp_sensor
+    entity_id: sensor.gewachshaus_temperatur_aussen
+    on_value:
+      then:
+        - lambda: |-
+            auto ui = static_cast<KitchenShutterUI*>(id(kitchen_shutter_ui));
+            ui->set_temp(x);
+
+
 custom_component:
   - lambda: |-
       auto ui = new KitchenShutterUI();
       return {ui};
+    components:
+      id: kitchen_shutter_ui
