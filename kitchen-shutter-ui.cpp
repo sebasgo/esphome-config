@@ -7,6 +7,17 @@ void KitchenShutterUI::setup() {
     setup_header();
 }
 
+void KitchenShutterUI::set_time(esphome::time::ESPTime time) {
+    if (time.is_valid()) {
+        char time_str[6];
+        time.strftime(&time_str[0], 6, "%H:%M");
+        lv_label_set_text(time_label_, &time_str[0]);
+    }
+    else {
+        lv_label_set_text(time_label_, "--:--");
+    }
+}
+
 void KitchenShutterUI::set_temp(float temp) {
     if (isnan(temp)) {
         lv_label_set_text(temp_label_, "-- °C");
@@ -32,9 +43,9 @@ void KitchenShutterUI::setup_header() {
     lv_obj_add_style(header, &header_style_, 0);
     lv_obj_align(header, LV_ALIGN_TOP_MID, 0, 0);
 
-    lv_obj_t *time_label = lv_label_create(header);
-    lv_label_set_text(time_label, "12:34");
-    lv_obj_align(time_label, LV_ALIGN_LEFT_MID, 0, 0);
+    time_label_ = lv_label_create(header);
+    lv_label_set_text(time_label_, "--:--");
+    lv_obj_align(time_label_, LV_ALIGN_LEFT_MID, 0, 0);
 
     temp_label_ = lv_label_create(header);
     lv_obj_align(temp_label_, LV_ALIGN_RIGHT_MID, 0, 0);

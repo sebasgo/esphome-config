@@ -30,6 +30,15 @@ cover:
       - switch.turn_off: relay1
       - switch.turn_off: relay2
 
+time:
+  - platform: homeassistant
+    on_time:
+    - seconds: 0
+      then:
+        - lambda: |-
+            auto ui = static_cast<KitchenShutterUI*>(id(kitchen_shutter_ui));
+            ui->set_time(id(homeassistant_time).now());
+
 sensor:
   - platform: homeassistant
     internal: yes
