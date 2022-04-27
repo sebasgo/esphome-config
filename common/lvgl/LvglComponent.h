@@ -74,10 +74,11 @@ public:
 
     this->high_freq_.start(); // avoid 16 ms delay
   }
-  void IRAM_ATTR loop() override
+  void loop() override
   {
     // This will be called every "update_interval" milliseconds.
     lv_timer_handler(); // called by dispatch_loop
+    ui_idle = lv_disp_get_inactive_time(NULL) > 10 * 1000;
     // this->high_freq_.stop();  // decrease the counter for check
     // if (high_freq_num_requests == 1)
     //   delay(5);
@@ -130,12 +131,15 @@ void IRAM_ATTR cap_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *
 {
   if (ft6336u_touch->read_touch_number() == 1)
   {
-    // if (hasp_sleep_state != HASP_SLEEP_OFF)
-    //   hasp_update_sleep_state(); // update Idle
-
-    data->point.x = ft6336u_touch->read_touch1_x();
-    data->point.y = ft6336u_touch->read_touch1_y();
-    data->state = LV_INDEV_STATE_PR;
+    if (ui_idle) {
+      lv_disp_trig_activity(NULL);
+      data->state = LV_INDEV_STATE_REL;
+    }
+    else {
+      data->point.x = ft6336u_touch->read_touch1_x();
+      data->point.y = ft6336u_touch->read_touch1_y();
+      data->state = LV_INDEV_STATE_PR;
+    }
   }
   else
   {
@@ -493,8 +497,7 @@ class LvglIdleSensor : public PollingComponent, public binary_sensor::BinarySens
   }
 
   void update() override {
-    bool idle = lv_disp_get_inactive_time(NULL) > 10 * 1000;
-    publish_state(idle);
+    publish_state(ui_idle);
   }
 
 };
