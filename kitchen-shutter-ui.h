@@ -13,9 +13,21 @@ public:
 private:
     void setup_styles();
     void setup_header();
+    void setup_tabs();
+    void setup_shutter_tab();
 
     lv_style_t header_style_;
+    lv_style_t btn_style_;
 
     lv_obj_t *time_label_{nullptr};
     lv_obj_t *temp_label_{nullptr};
+
+    lv_obj_t *shutter_tab_{nullptr};
+    lv_obj_t *coffee_tab_{nullptr};
+    lv_obj_t *settings_tab_{nullptr};
+
+    lv_obj_t *shutter_up_btn_{nullptr};
+    lv_obj_t *shutter_stop_btn_{nullptr};
+    lv_obj_t *shutter_down_btn_{nullptr};
+    lv_obj_t *shutter_auto_switch_{nullptr};
 };
