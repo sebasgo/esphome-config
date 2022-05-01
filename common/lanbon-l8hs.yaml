@@ -112,20 +112,6 @@ binary_sensor:
         then:
           - light.turn_on: backlight
 
-switch:
-  # Output relays
-  - platform: gpio
-    pin: GPIO12
-    id: relay1
-    name: ${dev_name} Relay 1
-  - platform: gpio
-    pin: GPIO14
-    id: relay2
-    name: ${dev_name} Relay 2
-  - platform: gpio
-    pin: GPIO27
-    id: relay3
-    name: ${dev_name} Relay 3
 
 light:
   # Backlight

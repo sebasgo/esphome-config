@@ -8,27 +8,29 @@ packages:
 
 esphome:
   includes:
+    - common/lvgl/lvgl_components.h
     - kitchen-shutter-ui.h
     - kitchen-shutter-ui.cpp
 
 cover:
   - platform: time_based
+    id: cover_
     name: ${dev_name}
     device_class: shutter
 
     open_action:
-      - switch.turn_off: relay2
-      - switch.turn_on: relay1
+      - switch.turn_off: shutter_relay_down
+      - switch.turn_on: shutter_relay_up
     open_duration: 10sec
 
     close_action:
-      - switch.turn_off: relay1
-      - switch.turn_on: relay2
+      - switch.turn_off: shutter_relay_up
+      - switch.turn_on: shutter_relay_down
     close_duration: 10sec
 
     stop_action:
-      - switch.turn_off: relay1
-      - switch.turn_off: relay2
+      - switch.turn_off: shutter_relay_up
+      - switch.turn_off: shutter_relay_down
 
 time:
   - platform: homeassistant
@@ -59,3 +61,73 @@ custom_component:
       return {ui};
     components:
       id: kitchen_shutter_ui
+
+
+switch:
+  - platform: gpio
+    pin: GPIO12
+    id: shutter_relay_up
+    name: ${dev_name} Shutter Relay Up
+    restore_mode: ALWAYS_OFF
+    interlock: [shutter_relay_down]
+    on_turn_on:
+      - switch.turn_on: shutter_up_switch
+    on_turn_off:
+      - switch.turn_off: shutter_up_switch
+
+  - platform: gpio
+    pin: GPIO14
+    id: shutter_relay_down
+    name: ${dev_name} Shutter Relay Down
+    restore_mode: ALWAYS_OFF
+    interlock: [shutter_relay_up]
+    on_turn_on:
+      - switch.turn_on: shutter_down_switch
+    on_turn_off:
+      - switch.turn_off: shutter_down_switch
+
+  - platform: custom
+    lambda: |-
+      auto ui = static_cast<KitchenShutterUI*>(id(kitchen_shutter_ui));
+      auto shutter_up_switch = ui->create_shutter_up_switch();
+      auto shutter_down_switch = ui->create_shutter_down_switch();
+      App.register_component(shutter_up_switch);
+      App.register_component(shutter_down_switch);
+      return {shutter_up_switch, shutter_down_switch};
+    switches:
+      - id: shutter_up_switch
+        internal: yes
+        on_turn_on:
+          - if:
+              condition:
+                lambda: |-
+                  return id(cover_).position == COVER_OPEN;
+              then:
+                - switch.turn_off: shutter_up_switch
+              else:
+                - cover.open: cover_
+        on_turn_off:
+          - if:
+              condition:
+                lambda: |-
+                  return id(cover_).current_operation != CoverOperation::COVER_OPERATION_IDLE;
+              then:
+                - cover.stop: cover_
+      - id: shutter_down_switch
+        internal: yes
+        on_turn_on:
+          - if:
+              condition:
+                lambda: |-
+                  return id(cover_).position == COVER_CLOSED;
+              then:
+                - switch.turn_off: shutter_down_switch
+              else:
+                - cover.close: cover_
+        on_turn_off:
+          - if:
+              condition:
+                lambda: |-
+                  return id(cover_).current_operation != CoverOperation::COVER_OPERATION_IDLE;
+              then:
+                - cover.stop: cover_

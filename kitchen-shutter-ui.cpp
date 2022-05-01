@@ -4,11 +4,14 @@
 
 #include "awesome_extra_16.h"
 
-void KitchenShutterUI::setup() {
+KitchenShutterUI::KitchenShutterUI() {
     setup_styles();
     setup_header();
     setup_tabs();
     setup_shutter_tab();
+}
+
+void KitchenShutterUI::setup() {
 }
 
 void KitchenShutterUI::set_time(esphome::time::ESPTime time) {
@@ -29,6 +32,14 @@ void KitchenShutterUI::set_temp(float temp) {
     else {
         lv_label_set_text_fmt(temp_label_, "%.1f °C", temp);
     }
+}
+
+LvglSwitch * KitchenShutterUI::create_shutter_up_switch() {
+    return new LvglSwitch(shutter_up_btn_);
+}
+
+LvglSwitch * KitchenShutterUI::create_shutter_down_switch() {
+    return new LvglSwitch(shutter_down_btn_);
 }
 
 void KitchenShutterUI::setup_styles() {

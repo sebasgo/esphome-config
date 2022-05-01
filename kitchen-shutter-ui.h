@@ -3,12 +3,18 @@
 #include <esphome.h>
 #include <lvgl.h>
 
+#include "lvgl_components.h"
+
 class KitchenShutterUI : public esphome::Component {
 
 public:
+    KitchenShutterUI();
     void setup() override;
     void set_time(esphome::time::ESPTime time);
     void set_temp(float temp);
+
+    LvglSwitch * create_shutter_up_switch();
+    LvglSwitch * create_shutter_down_switch();
 
 private:
     void setup_styles();
