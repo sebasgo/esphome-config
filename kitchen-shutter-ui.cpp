@@ -42,6 +42,10 @@ LvglSwitch * KitchenShutterUI::create_shutter_down_switch() {
     return new LvglSwitch(shutter_down_btn_);
 }
 
+LvglSwitch * KitchenShutterUI::create_shutter_stop_switch() {
+    return new LvglSwitch(shutter_stop_btn_);
+}
+
 void KitchenShutterUI::setup_styles() {
     lv_style_init(&header_style_);
     lv_style_set_radius(&header_style_, 0);
@@ -101,6 +105,7 @@ void KitchenShutterUI::setup_shutter_tab() {
     shutter_stop_btn_ = lv_btn_create(shutter_tab_);
     lv_obj_add_style(shutter_stop_btn_, &btn_style_, 0);
     lv_obj_set_size(shutter_stop_btn_, 48, 48);
+    lv_obj_add_flag(shutter_stop_btn_, LV_OBJ_FLAG_CHECKABLE);
     lv_obj_align(shutter_stop_btn_, LV_ALIGN_TOP_MID, 0, 48 + 12 + 6);
     lv_obj_t *stop_btn_label = lv_label_create(shutter_stop_btn_);
     lv_label_set_text(stop_btn_label, LV_SYMBOL_STOP);

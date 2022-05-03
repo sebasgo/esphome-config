@@ -91,9 +91,11 @@ switch:
       auto ui = static_cast<KitchenShutterUI*>(id(kitchen_shutter_ui));
       auto shutter_up_switch = ui->create_shutter_up_switch();
       auto shutter_down_switch = ui->create_shutter_down_switch();
+      auto shutter_stop_switch = ui->create_shutter_stop_switch();
       App.register_component(shutter_up_switch);
       App.register_component(shutter_down_switch);
-      return {shutter_up_switch, shutter_down_switch};
+      App.register_component(shutter_stop_switch);
+      return {shutter_up_switch, shutter_down_switch, shutter_stop_switch};
     switches:
       - id: shutter_up_switch
         internal: yes
@@ -131,3 +133,13 @@ switch:
                   return id(cover_).current_operation == CoverOperation::COVER_OPERATION_CLOSING;
               then:
                 - cover.stop: cover_
+      - id: shutter_stop_switch
+        internal: yes
+        on_turn_on:
+          - if:
+              condition:
+                lambda: |-
+                  return id(cover_).current_operation != CoverOperation::COVER_OPERATION_IDLE;
+              then:
+                - cover.stop: cover_
+          - switch.turn_off: shutter_stop_switch

@@ -15,6 +15,7 @@ public:
 
     LvglSwitch * create_shutter_up_switch();
     LvglSwitch * create_shutter_down_switch();
+    LvglSwitch * create_shutter_stop_switch();
 
 private:
     void setup_styles();
