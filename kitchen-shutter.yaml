@@ -110,7 +110,7 @@ switch:
           - if:
               condition:
                 lambda: |-
-                  return id(cover_).current_operation != CoverOperation::COVER_OPERATION_IDLE;
+                  return id(cover_).current_operation == CoverOperation::COVER_OPERATION_OPENING;
               then:
                 - cover.stop: cover_
       - id: shutter_down_switch
@@ -128,6 +128,6 @@ switch:
           - if:
               condition:
                 lambda: |-
-                  return id(cover_).current_operation != CoverOperation::COVER_OPERATION_IDLE;
+                  return id(cover_).current_operation == CoverOperation::COVER_OPERATION_CLOSING;
               then:
                 - cover.stop: cover_
