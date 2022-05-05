@@ -131,9 +131,23 @@ void KitchenShutterUI::setup_shutter_tab() {
     lv_obj_set_style_text_font(manual_label, &awesome_extra_16, 0);
     lv_label_set_text(manual_label, LV_SYMBOL_HAND);
     lv_obj_align_to(manual_label, shutter_auto_switch_, LV_ALIGN_OUT_LEFT_MID, -20, 0);
+    lv_obj_add_flag(manual_label, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(manual_label, shutter_auto_off_label_clicked_cb, LV_EVENT_CLICKED, (void *)this);
 
     lv_obj_t *auto_label = lv_label_create(shutter_tab_);
     lv_obj_set_style_text_font(auto_label, &awesome_extra_16, 0);
     lv_label_set_text(auto_label, LV_SYMBOL_CLOUDS_SUN);
     lv_obj_align_to(auto_label, shutter_auto_switch_, LV_ALIGN_OUT_RIGHT_MID, 20, 0);
+    lv_obj_add_flag(auto_label, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(auto_label, shutter_auto_on_label_clicked_cb, LV_EVENT_CLICKED, (void *)this);
+}
+
+void KitchenShutterUI::shutter_auto_off_label_clicked_cb(lv_event_t *event) {
+    auto ui = static_cast<KitchenShutterUI *>(event->user_data);
+    lv_obj_clear_state(ui->shutter_auto_switch_, LV_STATE_CHECKED);
+}
+
+void KitchenShutterUI::shutter_auto_on_label_clicked_cb(lv_event_t *event) {
+    auto ui = static_cast<KitchenShutterUI *>(event->user_data);
+    lv_obj_add_state(ui->shutter_auto_switch_, LV_STATE_CHECKED);
 }
