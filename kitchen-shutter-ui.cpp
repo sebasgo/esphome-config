@@ -46,6 +46,10 @@ LvglSwitch * KitchenShutterUI::create_shutter_stop_switch() {
     return new LvglSwitch(shutter_stop_btn_);
 }
 
+LvglSwitch * KitchenShutterUI::create_shutter_auto_switch() {
+    return new LvglSwitch(shutter_auto_switch_, LVGL_SWITCH_RESTORE_DEFAULT_OFF);
+}
+
 void KitchenShutterUI::setup_styles() {
     lv_style_init(&header_style_);
     lv_style_set_radius(&header_style_, 0);

@@ -92,10 +92,12 @@ switch:
       auto shutter_up_switch = ui->create_shutter_up_switch();
       auto shutter_down_switch = ui->create_shutter_down_switch();
       auto shutter_stop_switch = ui->create_shutter_stop_switch();
+      auto shutter_auto_switch = ui->create_shutter_auto_switch();
       App.register_component(shutter_up_switch);
       App.register_component(shutter_down_switch);
       App.register_component(shutter_stop_switch);
-      return {shutter_up_switch, shutter_down_switch, shutter_stop_switch};
+      App.register_component(shutter_auto_switch);
+      return {shutter_up_switch, shutter_down_switch, shutter_stop_switch, shutter_auto_switch};
     switches:
       - id: shutter_up_switch
         internal: yes
@@ -143,3 +145,5 @@ switch:
               then:
                 - cover.stop: cover_
           - switch.turn_off: shutter_stop_switch
+      - id: shutter_auto_switch
+        name: ${dev_name} Lichtautomatik
