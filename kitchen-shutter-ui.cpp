@@ -51,6 +51,12 @@ LvglSwitch * KitchenShutterUI::create_shutter_auto_switch() {
 }
 
 void KitchenShutterUI::setup_styles() {
+    lv_style_init(&tab_style_);
+    lv_style_set_pad_top(&tab_style_, 8);
+    lv_style_set_pad_bottom(&tab_style_, 8);
+    lv_style_set_pad_left(&tab_style_, 4);
+    lv_style_set_pad_right(&tab_style_, 4);
+
     lv_style_init(&header_style_);
     lv_style_set_radius(&header_style_, 0);
     lv_style_set_bg_opa(&header_style_, LV_OPA_COVER);
@@ -93,33 +99,37 @@ void KitchenShutterUI::setup_tabs() {
     shutter_tab_ = lv_tabview_add_tab(tabview, LV_SYMBOL_BLINDS);
     coffee_tab_ = lv_tabview_add_tab(tabview, LV_SYMBOL_MUG);
     settings_tab_ = lv_tabview_add_tab(tabview, LV_SYMBOL_SETTINGS);
+
+    lv_obj_add_style(shutter_tab_, &tab_style_, 0);
+    lv_obj_add_style(coffee_tab_, &tab_style_, 0);
+    lv_obj_add_style(settings_tab_, &tab_style_, 0);
 }
 
 
 void KitchenShutterUI::setup_shutter_tab() {
     shutter_up_btn_ = lv_btn_create(shutter_tab_);
     lv_obj_add_style(shutter_up_btn_, &btn_style_, 0);
-    lv_obj_set_size(shutter_up_btn_, 48, 48);
+    lv_obj_set_size(shutter_up_btn_, 232, 62);
     lv_obj_add_flag(shutter_up_btn_, LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_align(shutter_up_btn_, LV_ALIGN_TOP_MID, 0, 6);
+    lv_obj_align(shutter_up_btn_, LV_ALIGN_TOP_MID, 0, 0);
     lv_obj_t *up_btn_label = lv_label_create(shutter_up_btn_);
     lv_label_set_text(up_btn_label, LV_SYMBOL_UP);
     lv_obj_center(up_btn_label);
 
     shutter_stop_btn_ = lv_btn_create(shutter_tab_);
     lv_obj_add_style(shutter_stop_btn_, &btn_style_, 0);
-    lv_obj_set_size(shutter_stop_btn_, 48, 48);
+    lv_obj_set_size(shutter_stop_btn_, 232, 62);
     lv_obj_add_flag(shutter_stop_btn_, LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_align(shutter_stop_btn_, LV_ALIGN_TOP_MID, 0, 48 + 12 + 6);
+    lv_obj_align(shutter_stop_btn_, LV_ALIGN_TOP_MID, 0, 62 + 8);
     lv_obj_t *stop_btn_label = lv_label_create(shutter_stop_btn_);
     lv_label_set_text(stop_btn_label, LV_SYMBOL_STOP);
     lv_obj_center(stop_btn_label);
 
     shutter_down_btn_ = lv_btn_create(shutter_tab_);
     lv_obj_add_style(shutter_down_btn_, &btn_style_, 0);
-    lv_obj_set_size(shutter_down_btn_, 48, 48);
+    lv_obj_set_size(shutter_down_btn_, 232, 62);
     lv_obj_add_flag(shutter_down_btn_, LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_align(shutter_down_btn_, LV_ALIGN_TOP_MID, 0, 2 * (48 + 12) + 6);
+    lv_obj_align(shutter_down_btn_, LV_ALIGN_TOP_MID, 0, 2 * (62 + 8));
     lv_obj_t *down_btn_label = lv_label_create(shutter_down_btn_);
     lv_label_set_text(down_btn_label, LV_SYMBOL_DOWN);
     lv_obj_center(down_btn_label);

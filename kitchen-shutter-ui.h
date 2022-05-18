@@ -27,6 +27,7 @@ private:
     static void shutter_auto_off_label_clicked_cb(lv_event_t *event);
     static void shutter_auto_on_label_clicked_cb(lv_event_t *event);
 
+    lv_style_t tab_style_;
     lv_style_t header_style_;
     lv_style_t btn_style_;
 
