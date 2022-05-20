@@ -96,6 +96,8 @@ void KitchenShutterUI::setup_tabs() {
     lv_obj_t *tab_btns = lv_tabview_get_tab_btns(tabview);
     lv_obj_set_style_text_font(tab_btns, &awesome_extra_16, 0);
 
+    lv_obj_clear_flag(lv_tabview_get_content(tabview), LV_OBJ_FLAG_SCROLLABLE);
+
     shutter_tab_ = lv_tabview_add_tab(tabview, LV_SYMBOL_BLINDS);
     coffee_tab_ = lv_tabview_add_tab(tabview, LV_SYMBOL_MUG);
     settings_tab_ = lv_tabview_add_tab(tabview, LV_SYMBOL_SETTINGS);
