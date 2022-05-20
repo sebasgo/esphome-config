@@ -9,9 +9,21 @@ KitchenShutterUI::KitchenShutterUI() {
     setup_header();
     setup_tabs();
     setup_shutter_tab();
+    setup_screensaver();
 }
 
 void KitchenShutterUI::setup() {
+    lv_disp_trig_activity(NULL);
+}
+
+void KitchenShutterUI::loop() {
+    bool idle = lv_disp_get_inactive_time(NULL) > 15 * 1000;
+    if (idle_ != idle) {
+        if (idle) {
+            lv_obj_clear_flag(screensaver_, LV_OBJ_FLAG_HIDDEN);
+        }
+        idle_ = idle;
+    }
 }
 
 void KitchenShutterUI::set_time(esphome::time::ESPTime time) {
@@ -71,6 +83,10 @@ void KitchenShutterUI::setup_styles() {
     lv_style_set_text_color(&btn_style_, lv_color_black());
     lv_style_set_border_width(&btn_style_, 1);
     lv_style_set_border_color(&btn_style_, lv_palette_darken(LV_PALETTE_BLUE, 1));
+
+    lv_style_init(&screensaver_style_);
+    lv_style_set_radius(&screensaver_style_, 0);
+    lv_style_set_border_width(&screensaver_style_, 0);
 }
 
 void KitchenShutterUI::setup_header() {
@@ -154,6 +170,19 @@ void KitchenShutterUI::setup_shutter_tab() {
     lv_obj_add_event_cb(auto_label, shutter_auto_on_label_clicked_cb, LV_EVENT_CLICKED, (void *)this);
 }
 
+void KitchenShutterUI::setup_screensaver() {
+    screensaver_ = lv_obj_create(lv_scr_act());
+    lv_obj_add_style(screensaver_, &screensaver_style_, 0);
+    lv_obj_set_size(screensaver_, 240, 320);
+    lv_obj_add_flag(screensaver_, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_flag(screensaver_, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_align(screensaver_, LV_ALIGN_TOP_MID, 0, 0);
+    lv_obj_add_event_cb(screensaver_, screensaver_pressed_cb, LV_EVENT_PRESSED,
+                        static_cast<void *>(this));
+    lv_obj_add_flag(screensaver_, LV_OBJ_FLAG_HIDDEN);
+}
+
+
 void KitchenShutterUI::shutter_auto_off_label_clicked_cb(lv_event_t *event) {
     auto ui = static_cast<KitchenShutterUI *>(event->user_data);
     lv_obj_clear_state(ui->shutter_auto_switch_, LV_STATE_CHECKED);
@@ -162,4 +191,9 @@ void KitchenShutterUI::shutter_auto_off_label_clicked_cb(lv_event_t *event) {
 void KitchenShutterUI::shutter_auto_on_label_clicked_cb(lv_event_t *event) {
     auto ui = static_cast<KitchenShutterUI *>(event->user_data);
     lv_obj_add_state(ui->shutter_auto_switch_, LV_STATE_CHECKED);
+}
+
+void KitchenShutterUI::screensaver_pressed_cb(lv_event_t *event) {
+    auto ui = static_cast<KitchenShutterUI *>(event->user_data);
+    lv_obj_add_flag(ui->screensaver_, LV_OBJ_FLAG_HIDDEN);
 }

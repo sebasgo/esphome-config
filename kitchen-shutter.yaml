@@ -152,3 +152,22 @@ switch:
           - switch.turn_off: shutter_stop_switch
       - id: shutter_auto_switch
         name: ${dev_name} Lichtautomatik
+
+binary_sensor:
+  - platform: custom
+    lambda: |-
+      auto ui = static_cast<KitchenShutterUI*>(id(kitchen_shutter_ui));
+      auto sensor = new LvglIdleSensor(ui);
+      App.register_component(sensor);
+      return {sensor};
+    binary_sensors:
+      id: lvgl_idle_sensor
+      name: ${dev_name} Idle Sensor
+      on_press:
+        then:
+          - light.turn_off: backlight
+      on_release:
+        then:
+          - light.turn_on: backlight
+
+

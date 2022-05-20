@@ -25,8 +25,6 @@ static lv_disp_draw_buf_t disp_buf;
 static lv_color_t buf[buf_pix_count];
 lv_style_t switch_style;
 
-static bool ui_idle = false;
-
 /* LVGL callbacks - Needs to be accessible from C library */
 void IRAM_ATTR cap_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data);
 void IRAM_ATTR gui_flush_cb(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
@@ -81,11 +79,6 @@ public:
   {
     // This will be called every "update_interval" milliseconds.
     lv_timer_handler(); // called by dispatch_loop
-    ui_idle = lv_disp_get_inactive_time(NULL) > 10 * 1000;
-    // this->high_freq_.stop();  // decrease the counter for check
-    // if (high_freq_num_requests == 1)
-    //   delay(5);
-    // this->high_freq_.start();  // increase the counter for main loop
   }
   float get_setup_priority() const override { return esphome::setup_priority::DATA; }
 
@@ -134,15 +127,9 @@ void IRAM_ATTR cap_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *
 {
   if (ft6336u_touch->read_touch_number() == 1)
   {
-    if (ui_idle) {
-      lv_disp_trig_activity(NULL);
-      data->state = LV_INDEV_STATE_REL;
-    }
-    else {
-      data->point.x = ft6336u_touch->read_touch1_x();
-      data->point.y = ft6336u_touch->read_touch1_y();
-      data->state = LV_INDEV_STATE_PR;
-    }
+    data->point.x = ft6336u_touch->read_touch1_x();
+    data->point.y = ft6336u_touch->read_touch1_y();
+    data->state = LV_INDEV_STATE_PR;
   }
   else
   {
@@ -435,18 +422,4 @@ public:
     // Acknowledge new state by publishing it
     //sw->publish_state(state);
   }
-};
-
-class LvglIdleSensor : public PollingComponent, public binary_sensor::BinarySensor {
-
- public:
-  LvglIdleSensor() : PollingComponent(66) {}
-
-  void setup() override {
-  }
-
-  void update() override {
-    publish_state(ui_idle);
-  }
-
 };
