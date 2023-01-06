@@ -17,7 +17,7 @@ void KitchenShutterUI::setup() {
 }
 
 void KitchenShutterUI::loop() {
-    bool idle = lv_disp_get_inactive_time(NULL) > 15 * 1000;
+    bool idle = lv_disp_get_inactive_time(NULL) > 60 * 1000;
     if (idle_ != idle) {
         if (idle) {
             lv_obj_clear_flag(screensaver_, LV_OBJ_FLAG_HIDDEN);
