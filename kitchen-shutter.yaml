@@ -58,6 +58,11 @@ sensor:
         - lambda: |-
             auto ui = static_cast<KitchenShutterUI*>(id(kitchen_shutter_ui));
             ui->set_temp(x);
+  - platform: adc
+    id: light_sensor
+    attenuation: auto
+    name: "${dev_name} Lichtsensor"
+    pin: GPIO39
 
 
 custom_component:
