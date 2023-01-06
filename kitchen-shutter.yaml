@@ -21,12 +21,12 @@ cover:
     open_action:
       - switch.turn_off: shutter_relay_down
       - switch.turn_on: shutter_relay_up
-    open_duration: 10sec
+    open_duration: 24sec
 
     close_action:
       - switch.turn_off: shutter_relay_up
       - switch.turn_on: shutter_relay_down
-    close_duration: 10sec
+    close_duration: 24sec
 
     stop_action:
       - switch.turn_off: shutter_relay_up
