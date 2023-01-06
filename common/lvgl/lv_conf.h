@@ -275,7 +275,7 @@ typedef void* lv_indev_drv_user_data_t;            /*Type of user data in the in
  * Log settings
  *===============*/
 
-#define LV_USE_PERF_MONITOR  1
+#define LV_USE_PERF_MONITOR  0
 
  /*1: Enable the log module*/
 #define LV_USE_LOG      1  // set back to 0 before release !!
