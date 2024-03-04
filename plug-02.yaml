@@ -2,9 +2,10 @@
 
 substitutions:
   dev_id: plug02
-  dev_name: Steckdose 2
+  dev_name: Sterne Sophie
 
 packages:
+  sun: !include common/sun_night_light.yaml
   device_base: !include common/plug_gosund.yaml
 
 sensor:
